@@ -31,6 +31,7 @@ class User extends Authenticatable
         'twitter',
         'linkedin',
         'whatsapp',
+        'other_social_networks',
         'phone',
         'address',
         'number',
@@ -63,6 +64,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'other_social_networks' => 'array',
         ];
     }
 }

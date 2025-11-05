@@ -27,7 +27,7 @@ return new class extends Migration
             $table->string('instagram')->nullable();
             $table->string('twitter')->nullable();
             $table->string('linkedin')->nullable();
-            $table->string('whatsapp')->nullable();
+            $table->json('other_social_networks')->nullable();
             $table->string('phone')->nullable();
             $table->string('address')->nullable();
             $table->string('number')->nullable();

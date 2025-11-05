@@ -3,12 +3,14 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ $user->name }} — Cartão de Visitas</title>
+    <title>{{ $user->name }}</title>
     <meta name="description" content="Cartão de visitas online de {{ $user->name }} com links e contatos.">
     <link rel="icon" href="/favicon.ico">
 
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-800 text-slate-100 font-sans">
@@ -36,7 +38,7 @@
 
             <!-- Corpo -->
             <div class="px-5 pb-6 text-center">
-                <div class="-mt-12 mx-auto h-24 w-24 rounded-full border border-white/20 bg-white/10 shadow-xl shadow-black/40 overflow-hidden">
+                <div class="-mt-12 mx-auto h-24 w-24 rounded-full border-4 border-white/50 bg-white/10 shadow-xl shadow-black/40 overflow-hidden z-10 animate-bounce" style="animation-duration: 2s;">
                     @if($user->image)
                         <img src="{{ asset('storage/' . $user->image) }}" alt="Foto de {{ $user->name }}" class="h-full w-full object-cover">
                     @else
@@ -53,44 +55,57 @@
                 <div class="mt-5 grid gap-2">
                     @if($user->facebook)
                         <a href="{{ $user->facebook }}" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold hover:bg-white/10 transition">
-                            <svg class="h-4 w-4 opacity-90" viewBox="0 0 24 24" fill="currentColor"><path d="M13 3h4a1 1 0 011 1v3h-4v3h4l-1 4h-3v7h-4v-7H8v-4h3V7a4 4 0 014-4z"/></svg>
+                            <i class="fa-brands fa-facebook-f text-white"></i>
                             Facebook
                         </a>
                     @endif
 
                     @if($user->instagram)
                         <a href="{{ $user->instagram }}" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold hover:bg-white/10 transition">
-                            <svg class="h-4 w-4 opacity-90" viewBox="0 0 24 24" fill="currentColor"><path d="M7 2h10a5 5 0 015 5v10a5 5 0 01-5 5H7a5 5 0 01-5-5V7a5 5 0 015-5zm5 4a5 5 0 100 10 5 5 0 000-10zm6-1a1 1 0 100 2 1 1 0 000-2z"/></svg>
+                            <i class="fa-brands fa-instagram text-white"></i>
                             Instagram
                         </a>
                     @endif
 
                     @if($user->twitter)
                         <a href="{{ $user->twitter }}" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold hover:bg-white/10 transition">
-                            <svg class="h-4 w-4 opacity-90" viewBox="0 0 24 24" fill="currentColor"><path d="M22 5.8a7.5 7.5 0 01-2.2.6A3.8 3.8 0 0021.4 4a7.6 7.6 0 01-2.4.9 3.8 3.8 0 00-6.6 3.5A10.8 10.8 0 013 5a3.8 3.8 0 001.2 5A3.7 3.7 0 013 9.3v.1a3.8 3.8 0 003 3.7 3.8 3.8 0 01-1.7.1 3.8 3.8 0 003.6 2.7A7.6 7.6 0 013 18a10.7 10.7 0 005.8 1.7c7 0 10.8-5.9 10.8-11v-.5A7.8 7.8 0 0022 5.8z"/></svg>
+                            <i class="fa-brands fa-twitter text-white"></i>
                             Twitter/X
                         </a>
                     @endif
 
                     @if($user->linkedin)
                         <a href="{{ $user->linkedin }}" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold hover:bg-white/10 transition">
-                            <svg class="h-4 w-4 opacity-90" viewBox="0 0 24 24" fill="currentColor"><path d="M6 9h3v9H6zM7.5 6a1.5 1.5 0 110-3 1.5 1.5 0 010 3zM11 9h3v1.5c.6-1.1 2.2-2 3.8-2 3 0 4.2 1.8 4.2 5.1V18h-3v-3.7c0-1.7-.6-2.6-2-2.6-1.4 0-2.2.9-2.2 2.6V18H11z"/></svg>
+                            <i class="fa-brands fa-linkedin-in text-white"></i>
                             LinkedIn
                         </a>
                     @endif
 
                     @if($user->whatsapp)
                         <a href="{{ str_starts_with($user->whatsapp, 'http') ? $user->whatsapp : 'https://wa.me/' . preg_replace('/\D+/', '', $user->whatsapp) }}" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold hover:bg-white/10 transition">
-                            <svg class="h-4 w-4 opacity-90" viewBox="0 0 24 24" fill="currentColor"><path d="M20 3a9 9 0 00-15 10l-2 6 6-2a9 9 0 0011-14zM7 17l1.7-.6a7 7 0 11.6-10.6A7 7 0 017 17z"/></svg>
+                            <i class="fa-brands fa-whatsapp text-white"></i>
                             WhatsApp
                         </a>
                     @endif
 
                     @if($user->phone)
                         <a href="tel:{{ preg_replace('/\D+/', '', $user->phone) }}" class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold hover:bg-white/10 transition">
-                            <svg class="h-4 w-4 opacity-90" viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8a15 15 0 006.6 6.6l2.2-2.2a1 1 0 011.1-.2 11.7 11.7 0 003.7.6 1 1 0 011 1v3.5a1 1 0 01-1 1A18.5 18.5 0 013 5a1 1 0 011-1h3.5a1 1 0 011 1 11.7 11.7 0 00.6 3.7 1 1 0 01-.2 1.1l-2.3 2z"/></svg>
+                            <i class="fa-solid fa-phone text-white"></i>
                             {{ $user->phone }}
                         </a>
+                    @endif
+                    @if(!empty($user->other_social_networks) && is_array($user->other_social_networks))
+                        @foreach($user->other_social_networks as $label => $url)
+                            @if(!empty($url))
+                                <a href="{{ $url }}" target="_blank" rel="noopener"
+                                   class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold hover:bg-white/10 transition">
+                                    <svg class="h-4 w-4 opacity-90" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 2l3 7h7l-5.5 4 2.5 7-6-4.5-6 4.5 2.5-7L2 9h7z" />
+                                    </svg>
+                                    {{ $label }}
+                                </a>
+                            @endif
+                        @endforeach
                     @endif
                 </div>
 

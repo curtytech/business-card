@@ -37,8 +37,6 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
-                Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -53,6 +51,17 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+            ])
+            ->navigationItems([
+                \Filament\Navigation\NavigationItem::make('Voltar ao site')
+                    ->url('/', shouldOpenInNewTab: false)
+                    ->icon('heroicon-o-arrow-uturn-left')
+                    ->sort(1),
+                \Filament\Navigation\NavigationItem::make('Ver minha página')
+                    ->url(fn (): string => route('users.show', ['user' => auth()->user()->slug]))
+                    ->icon('heroicon-o-eye')
+                    ->visible(fn (): bool => auth()->check() && auth()->user()->role === 'user')
+                    ->sort(2),
             ]);
     }
 }

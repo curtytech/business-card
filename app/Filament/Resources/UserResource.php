@@ -10,11 +10,14 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\KeyValue;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class UserResource extends Resource
 {
@@ -38,23 +41,30 @@ class UserResource extends Resource
                             ->required()
                             ->maxLength(255),
 
-                        TextInput::make('email')
-                            ->label('Email')
-                            ->email()
+                        TextInput::make('slug')
+                            ->label('Slug')
                             ->required()
-                            ->unique(table: 'users', column: 'email', ignoreRecord: true),
+                            ->maxLength(255),
+
+
                     ]),
 
                 Section::make('Autenticação')
                     ->columns(2)
                     ->schema([
+                        TextInput::make('email')
+                            ->label('Email')
+                            ->email()
+                            ->required()
+                            ->unique(table: 'users', column: 'email', ignoreRecord: true),
                         TextInput::make('password')
                             ->label('Senha')
                             ->password()
                             ->revealable()
-                            ->dehydrateStateUsing(fn ($state) => filled($state) ? bcrypt($state) : null)
-                            ->dehydrated(fn ($state) => filled($state))
-                            ->required(fn (string $context) => $context === 'create'),
+                            ->dehydrateStateUsing(fn($state) => filled($state) ? bcrypt($state) : null)
+                            ->dehydrated(fn($state) => filled($state))
+                            ->required(fn(string $context) => $context === 'create'),
+
                     ]),
 
                 Section::make('Imagens e Cores')
@@ -100,6 +110,21 @@ class UserResource extends Resource
                         TextInput::make('twitter')->label('Twitter/X')->maxLength(255)->nullable(),
                         TextInput::make('linkedin')->label('LinkedIn')->maxLength(255)->nullable(),
                         TextInput::make('whatsapp')->label('WhatsApp')->maxLength(255)->nullable(),
+                    ]),
+
+                Section::make('Outras redes sociais')
+                    ->columns(1)
+                    ->schema([
+                        KeyValue::make('other_social_networks')
+                            ->label('Outras redes sociais')
+                            ->keyLabel('Nome da rede')
+                            ->valueLabel('URL')
+                            ->keyPlaceholder('YouTube')
+                            ->valuePlaceholder('https://exemplo.com/seu-perfil')
+                            ->addButtonLabel('Adicionar')
+                            ->deleteButtonLabel('Remover')
+                            ->reorderable()
+                            ->nullable(),
                     ]),
 
                 Section::make('Contato e Endereço')
@@ -179,5 +204,44 @@ class UserResource extends Resource
             'create' => Pages\CreateUser::route('/create'),
             'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+
+        if (auth()->check() && auth()->user()->role === 'user') {
+            return $query->whereKey(auth()->id());
+        }
+
+        return $query;
+    }
+
+    public static function canViewAny(): bool
+    {
+        return auth()->check();
+    }
+
+    public static function canCreate(): bool
+    {
+        return auth()->check() && auth()->user()->role !== 'user';
+    }
+
+    public static function canEdit(Model $record): bool
+    {
+        if (! auth()->check()) {
+            return false;
+        }
+
+        if (auth()->user()->role !== 'user') {
+            return true; // admin ou outros papéis podem editar
+        }
+
+        return $record->getKey() === auth()->id();
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return auth()->check() && auth()->user()->role !== 'user';
     }
 }
