@@ -11,11 +11,13 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\KeyValue;
+use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -39,14 +41,21 @@ class UserResource extends Resource
                         TextInput::make('name')
                             ->label('Nome')
                             ->required()
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->live(onBlur: true)
+                            ->afterStateUpdated(function ($state, Set $set) {
+                                $set('slug', Str::slug($state));
+                            }),
 
                         TextInput::make('slug')
                             ->label('Slug')
                             ->required()
-                            ->maxLength(255),
-
-
+                            ->maxLength(255)
+                            ->placeholder('ex: joao-silva')
+                            ->helperText('Use apenas letras e números; espaços viram "-".')
+                            ->rule('regex:/^[a-z0-9-]+$/')
+                            ->unique(table: 'users', column: 'slug', ignoreRecord: true)
+                            ->dehydrateStateUsing(fn ($state) => Str::slug((string) $state)),
                     ]),
 
                 Section::make('Autenticação')
