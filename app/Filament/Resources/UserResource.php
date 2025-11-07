@@ -20,6 +20,7 @@ use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Template;
 
 class UserResource extends Resource
 {
@@ -102,11 +103,12 @@ class UserResource extends Resource
                     ->schema([
                         Select::make('template')
                             ->label('Template')
-                            ->options([
-                                'default' => 'Padrão',
-                                'modern' => 'Moderno',
-                                'classic' => 'Clássico',
-                            ])
+                            ->options(fn () => Template::query()
+                                ->orderBy('name')
+                                ->pluck('name', 'name')
+                                ->toArray())
+                            ->searchable()
+                            ->preload()
                             ->native(false)
                             ->nullable(),
                     ]),
@@ -190,11 +192,10 @@ class UserResource extends Resource
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('template')
-                    ->options([
-                        'default' => 'Padrão',
-                        'modern' => 'Moderno',
-                        'classic' => 'Clássico',
-                    ]),
+                    ->options(fn () => Template::query()
+                        ->orderBy('name')
+                        ->pluck('name', 'name')
+                        ->toArray()),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),

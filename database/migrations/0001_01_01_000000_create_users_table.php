@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('cover_image')->nullable();
             $table->string('email')->unique();
             $table->string('facebook')->nullable();
+            $table->string('whatsapp')->nullable();
             $table->string('instagram')->nullable();
             $table->string('twitter')->nullable();
             $table->string('linkedin')->nullable();

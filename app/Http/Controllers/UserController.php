@@ -12,7 +12,12 @@ class UserController extends Controller
 {
     public function show(User $user)
     {
-        return view('users.show', compact('user'));
+        // Se o template não for especificado, use o padrão
+        if (!$user->template) {
+            $user->template = 'default';
+        }
+
+        return view("users.templates.{$user->template}", compact('user'));
     }
 
     public function create()
