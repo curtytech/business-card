@@ -125,22 +125,38 @@
     <!-- Preview do Cartão -->
     <section id="preview" class="mx-auto max-w-7xl px-6 pb-20">
         <div class="mx-auto max-w-md overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-2xl shadow-black/40">
-            <div class="h-36 bg-gradient-to-tr from-amber-500/40 via-yellow-400/30 to-amber-200/10"></div>
+            <div
+                class="h-40 sm:h-48"
+                style="background:
+                    radial-gradient(600px 140px at 20% 0%, color-mix(in oklab, var(--primary) 45%, transparent), transparent 60%),
+                    radial-gradient(600px 140px at 80% 0%, color-mix(in oklab, var(--secondary) 40%, transparent), transparent 60%),
+                    linear-gradient(135deg, #0b1224, #111827 60%, #1f2937);">
+                <img
+                    src="{{ asset('img/tecnology.jpg') }}"
+                    alt="Capa"
+                    class="h-full w-full object-cover mix-blend-luminosity">
+            </div>
+
             <div class="px-5 pb-5 text-center">
-                <div class="-mt-10 mx-auto h-20 w-20 rounded-full border border-white/20 bg-gradient-to-tr from-amber-400 to-yellow-300"></div>
-                <h4 class="mt-3 text-lg font-bold">Maria Andrade</h4>
-                <p class="text-sm text-slate-300">Consultora de Marketing</p>
+                <div class="-mt-10 mx-auto h-20 w-20 rounded-full border border-white/20 animate-bounce">
+                     <img
+                    src="{{ asset('img/IProf.jpg') }}"
+                    alt="Capa"
+                    class="h-full w-full rounded-full object-cover mix-blend-luminosity">
+                </div>
+                <h4 class="mt-3 text-lg font-bold">Phelipe Curty</h4>
+                <p class="text-sm text-slate-300">Desenvolvedor</p>
 
                 <div class="mt-4 grid gap-2">
-                    <a href="#" class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-100 hover:bg-white/10 hover:-translate-y-0.5 transition">
+                    <a href="https://phelipecurty.vercel.app" class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-100 hover:bg-white/10 hover:-translate-y-0.5 transition">
                         <i class="fa-solid fa-globe text-white"></i>
                         Site Oficial
                     </a>
-                    <a href="#" class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-100 hover:bg-white/10 hover:-translate-y-0.5 transition">
+                    <a href="https://www.instagram.com/phelipecurty" class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-100 hover:bg-white/10 hover:-translate-y-0.5 transition">
                         <i class="fa-solid fa-globe text-white"></i>
                         Instagram
                     </a>
-                    <a href="#" class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-100 hover:bg-white/10 hover:-translate-y-0.5 transition">
+                    <a href="https://www.linkedin.com/in/phelipecurty/" class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-100 hover:bg-white/10 hover:-translate-y-0.5 transition">
                         <i class="fa-brands fa-linkedin text-black"></i>
                         LinkedIn
                     </a>
@@ -158,7 +174,9 @@
     <!-- Footer -->
     <footer class="border-t border-white/10">
         <div class="mx-auto max-w-7xl px-6 py-6 text-center text-sm text-slate-300">
-            © {{ date('Y') }} Cartão de Visitas Online — todos os direitos reservados.
+            © {{ date('Y') }} -
+            <a href="https://phelipecurty.vercel.app" target="_blank">Phelipe Curty
+            </a>
         </div>
     </footer>
 </body>
