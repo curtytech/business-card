@@ -42,7 +42,7 @@ class UserResource extends Resource
                         TextInput::make('name')
                             ->label('Nome')
                             ->required()
-                            ->maxLength(255)
+                            ->maxLength(100)
                             ->live(onBlur: true)
                             ->afterStateUpdated(function ($state, Set $set) {
                                 $set('slug', Str::slug($state));
@@ -51,7 +51,7 @@ class UserResource extends Resource
                         TextInput::make('slug')
                             ->label('Slug')
                             ->required()
-                            ->maxLength(255)
+                            ->maxLength(50)
                             ->placeholder('ex: joao-silva')
                             ->helperText('Use apenas letras e números; espaços viram "-".')
                             ->rule('regex:/^[a-z0-9-]+$/')
@@ -135,20 +135,57 @@ class UserResource extends Resource
                             ->addButtonLabel('Adicionar')
                             ->deleteButtonLabel('Remover')
                             ->reorderable()
-                            ->nullable(),
+                            ->nullable()
+                            ->rules([
+                                fn () => function (string $attribute, mixed $value, \Closure $fail) {
+                                    if (! is_array($value)) {
+                                        return;
+                                    }
+                                    foreach ($value as $url) {
+                                        if (! filter_var($url, FILTER_VALIDATE_URL)) {
+                                            $fail("O campo {$attribute} deve conter URLs válidas.");
+                                        }
+                                    }
+                                },
+                            ]),
                     ]),
 
                 Section::make('Contato e Endereço')
                     ->columns(2)
                     ->schema([
-                        TextInput::make('phone')->label('Telefone')->maxLength(255)->nullable(),
-                        TextInput::make('address')->label('Endereço')->maxLength(255)->nullable(),
-                        TextInput::make('number')->label('Número')->maxLength(255)->nullable(),
-                        TextInput::make('neighborhood')->label('Bairro')->maxLength(255)->nullable(),
-                        TextInput::make('city')->label('Cidade')->maxLength(255)->nullable(),
-                        TextInput::make('state')->label('Estado')->maxLength(255)->nullable(),
-                        TextInput::make('country')->label('País')->maxLength(255)->nullable(),
-                        TextInput::make('zipcode')->label('CEP')->maxLength(255)->nullable(),
+                        TextInput::make('phone')
+                            ->label('Telefone')
+                            ->mask('(99) 99999-9999')
+                            ->placeholder('(99) 99999-9999')
+                            ->maxLength(15)
+                            ->nullable(),
+                        TextInput::make('address')->label('Endereço')->maxLength(50)->nullable(),
+                        TextInput::make('number')->label('Número')->maxLength(50)->nullable(),
+                        TextInput::make('neighborhood')->label('Bairro')->maxLength(50)->nullable(),
+                        TextInput::make('city')
+                            ->label('Cidade')
+                            ->maxLength(50)
+                            ->nullable()
+                            ->rule('regex:/^[a-zA-ZÀ-ÿ\s]+$/')
+                            ->helperText('Apenas letras são permitidas.'),                            
+                        TextInput::make('state')
+                            ->label('Estado')
+                            ->maxLength(50)
+                            ->nullable()
+                            ->rule('regex:/^[a-zA-ZÀ-ÿ\s]+$/')
+                            ->helperText('Apenas letras são permitidas.'),
+                        TextInput::make('country')
+                            ->label('País')
+                            ->maxLength(50)
+                            ->nullable()
+                            ->rule('regex:/^[a-zA-ZÀ-ÿ\s]+$/')
+                            ->helperText('Apenas letras são permitidas.'),
+                        TextInput::make('zipcode')
+                            ->label('CEP')
+                            ->mask('99999-999')
+                            ->placeholder('99999-999')
+                            ->maxLength(10)
+                            ->nullable(),
                     ]),
             ]);
     }
