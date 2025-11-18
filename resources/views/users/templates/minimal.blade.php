@@ -16,7 +16,6 @@
 
 <body class="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-800 text-slate-100 font-sans">
     <main class="mx-auto max-w-3xl px-6 py-10">
-        <p>Minimal</p>
         <div
             class="overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-2xl shadow-black/40"
             style="--primary: {{ $user->primary_color ?: '#f59e0b' }}; --secondary: {{ $user->secondary_color ?: '#eab308' }};"

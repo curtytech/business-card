@@ -49,7 +49,7 @@ class UserResource extends Resource
                             }),
 
                         TextInput::make('slug')
-                            ->label('Slug')
+                            ->label('Link')
                             ->required()
                             ->maxLength(50)
                             ->placeholder('ex: joao-silva')
