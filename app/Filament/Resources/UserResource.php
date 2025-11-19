@@ -37,12 +37,12 @@ class UserResource extends Resource
         return $form
             ->schema([
                 Section::make('Informações Básicas')
-                    ->columns(2)
+                    ->columns(3)
                     ->schema([
                         TextInput::make('name')
                             ->label('Nome')
                             ->required()
-                            ->maxLength(100)
+                            ->maxLength(70)
                             ->live(onBlur: true)
                             ->afterStateUpdated(function ($state, Set $set) {
                                 $set('slug', Str::slug($state));
@@ -56,7 +56,12 @@ class UserResource extends Resource
                             ->helperText('Use apenas letras e números; espaços viram "-".')
                             ->rule('regex:/^[a-z0-9-]+$/')
                             ->unique(table: 'users', column: 'slug', ignoreRecord: true)
-                            ->dehydrateStateUsing(fn ($state) => Str::slug((string) $state)),
+                            ->dehydrateStateUsing(fn($state) => Str::slug((string) $state)),
+
+                        TextInput::make('position')
+                            ->label('Posição')
+                            ->maxLength(50)
+                            ->nullable(),
                     ]),
 
                 Section::make('Autenticação')
@@ -85,7 +90,6 @@ class UserResource extends Resource
                             ->image()
                             ->disk('public')
                             ->directory('users'),
-
                         FileUpload::make('cover_image')
                             ->label('Imagem de capa')
                             ->image()
@@ -103,7 +107,7 @@ class UserResource extends Resource
                     ->schema([
                         Select::make('template')
                             ->label('Template')
-                            ->options(fn () => Template::query()
+                            ->options(fn() => Template::query()
                                 ->orderBy('name')
                                 ->pluck('name', 'name')
                                 ->toArray())
@@ -137,7 +141,7 @@ class UserResource extends Resource
                             ->reorderable()
                             ->nullable()
                             ->rules([
-                                fn () => function (string $attribute, mixed $value, \Closure $fail) {
+                                fn() => function (string $attribute, mixed $value, \Closure $fail) {
                                     if (! is_array($value)) {
                                         return;
                                     }
@@ -167,7 +171,7 @@ class UserResource extends Resource
                             ->maxLength(50)
                             ->nullable()
                             ->rule('regex:/^[a-zA-ZÀ-ÿ\s]+$/')
-                            ->helperText('Apenas letras são permitidas.'),                            
+                            ->helperText('Apenas letras são permitidas.'),
                         TextInput::make('state')
                             ->label('Estado')
                             ->maxLength(50)
@@ -229,7 +233,7 @@ class UserResource extends Resource
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('template')
-                    ->options(fn () => Template::query()
+                    ->options(fn() => Template::query()
                         ->orderBy('name')
                         ->pluck('name', 'name')
                         ->toArray()),
