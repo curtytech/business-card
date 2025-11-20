@@ -33,7 +33,7 @@
             </a>
             <nav class="flex items-center gap-2">
                 <a href="/admin/login" class="inline-flex items-center rounded-xl px-4 py-2 text-sm font-semibold text-slate-100 ring-1 ring-white/15 hover:ring-white/25 transition">Entrar</a>
-                <a href="/admin" class="inline-flex items-center rounded-xl bg-gradient-to-tr from-amber-400 to-yellow-300 px-4 py-2 text-sm font-semibold text-slate-950 hover:brightness-95 transition">Criar meu cartão</a>
+                <a href="/register" class="inline-flex items-center rounded-xl bg-gradient-to-tr from-amber-400 to-yellow-300 px-4 py-2 text-sm font-semibold text-slate-950 hover:brightness-95 transition">Criar meu cartão</a>
             </nav>
         </div>
     </header>
