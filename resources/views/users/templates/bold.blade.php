@@ -63,6 +63,17 @@
                 'label' => 'WhatsApp',
             ];
         }
+        if (!empty($user->other_social_networks) && is_array($user->other_social_networks)) {
+                    foreach ($user->other_social_networks as $label => $url) {
+                        if (!empty($url)) {
+                            $links[] = [
+                                'url' => $url,
+                                'icon' => '<i class="fa-solid fa-link text-white"></i>',
+                                'label' => $label,
+                            ];
+                        }
+                    }
+                }
     @endphp
 
     <!-- Cartão Horizontal -->
@@ -98,8 +109,8 @@
                 <h1 class="text-2xl sm:text-3xl font-bold text-white drop-shadow-md">{{ $user->name }}</h1>
 
                 <!-- Profissão -->
-                @if($user->template)
-                    <p class="text-sm sm:text-base text-white/80 drop-shadow-sm mt-1">Advogado</p>
+                @if($user->position)
+                    <p class="text-sm sm:text-base text-white/80 drop-shadow-sm mt-1">Cargo: {{ ucfirst($user->position) }}</p>
                 @endif
 
                 <!-- Divisória sutil -->
@@ -117,6 +128,7 @@
                 </div>
             </div>
 
+            
             <!-- Botão salvar contato -->
             <div class="mt-4 sm:mt-6">
                 <button class="w-full bg-black text-white py-3 sm:py-4 rounded-xl font-semibold text-sm sm:text-lg hover:bg-gray-900 transition">

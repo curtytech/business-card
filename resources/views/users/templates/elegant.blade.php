@@ -58,8 +58,8 @@
             <!-- Nome -->
             <h1 class="mt-3 text-2xl font-bold">{{ $user->name }}</h1>
 
-            @if($user->template)
-                <p class="text-sm text-slate-300">Template: {{ ucfirst($user->template) }}</p>
+            @if($user->position)
+                    <p class="text-xs text-slate-300">Cargo: {{ ucfirst($user->position) }}</p>
             @endif
 
 
@@ -119,7 +119,7 @@
                         if (!empty($url)) {
                             $links[] = [
                                 'url' => $url,
-                                'icon' => '<svg class="h-4 w-4 opacity-90" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4 2.5 7-6-4.5-6 4.5 2.5-7L2 9h7z" /></svg>',
+                                'icon' => '<i class="fa-solid fa-link text-white"></i>',
                                 'label' => $label,
                             ];
                         }
