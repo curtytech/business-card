@@ -37,26 +37,31 @@ class UserResource extends Resource
         return $form
             ->schema([
                 Section::make('Informações Básicas')
-                    ->columns(2)
+                    ->columns(3)
                     ->schema([
                         TextInput::make('name')
                             ->label('Nome')
                             ->required()
-                            ->maxLength(255)
+                            ->maxLength(70)
                             ->live(onBlur: true)
                             ->afterStateUpdated(function ($state, Set $set) {
                                 $set('slug', Str::slug($state));
                             }),
 
                         TextInput::make('slug')
-                            ->label('Slug')
+                            ->label('Link')
                             ->required()
-                            ->maxLength(255)
+                            ->maxLength(50)
                             ->placeholder('ex: joao-silva')
                             ->helperText('Use apenas letras e números; espaços viram "-".')
                             ->rule('regex:/^[a-z0-9-]+$/')
                             ->unique(table: 'users', column: 'slug', ignoreRecord: true)
-                            ->dehydrateStateUsing(fn ($state) => Str::slug((string) $state)),
+                            ->dehydrateStateUsing(fn($state) => Str::slug((string) $state)),
+
+                        TextInput::make('position')
+                            ->label('Posição')
+                            ->maxLength(50)
+                            ->nullable(),
                     ]),
 
                 Section::make('Autenticação')
@@ -85,7 +90,6 @@ class UserResource extends Resource
                             ->image()
                             ->disk('public')
                             ->directory('users'),
-
                         FileUpload::make('cover_image')
                             ->label('Imagem de capa')
                             ->image()
@@ -103,7 +107,7 @@ class UserResource extends Resource
                     ->schema([
                         Select::make('template')
                             ->label('Template')
-                            ->options(fn () => Template::query()
+                            ->options(fn() => Template::query()
                                 ->orderBy('name')
                                 ->pluck('name', 'name')
                                 ->toArray())
@@ -135,20 +139,57 @@ class UserResource extends Resource
                             ->addButtonLabel('Adicionar')
                             ->deleteButtonLabel('Remover')
                             ->reorderable()
-                            ->nullable(),
+                            ->nullable()
+                            ->rules([
+                                fn() => function (string $attribute, mixed $value, \Closure $fail) {
+                                    if (! is_array($value)) {
+                                        return;
+                                    }
+                                    foreach ($value as $url) {
+                                        if (! filter_var($url, FILTER_VALIDATE_URL)) {
+                                            $fail("O campo {$attribute} deve conter URLs válidas.");
+                                        }
+                                    }
+                                },
+                            ]),
                     ]),
 
                 Section::make('Contato e Endereço')
                     ->columns(2)
                     ->schema([
-                        TextInput::make('phone')->label('Telefone')->maxLength(255)->nullable(),
-                        TextInput::make('address')->label('Endereço')->maxLength(255)->nullable(),
-                        TextInput::make('number')->label('Número')->maxLength(255)->nullable(),
-                        TextInput::make('neighborhood')->label('Bairro')->maxLength(255)->nullable(),
-                        TextInput::make('city')->label('Cidade')->maxLength(255)->nullable(),
-                        TextInput::make('state')->label('Estado')->maxLength(255)->nullable(),
-                        TextInput::make('country')->label('País')->maxLength(255)->nullable(),
-                        TextInput::make('zipcode')->label('CEP')->maxLength(255)->nullable(),
+                        TextInput::make('phone')
+                            ->label('Telefone')
+                            ->mask('(99) 99999-9999')
+                            ->placeholder('(99) 99999-9999')
+                            ->maxLength(15)
+                            ->nullable(),
+                        TextInput::make('address')->label('Endereço')->maxLength(50)->nullable(),
+                        TextInput::make('number')->label('Número')->maxLength(50)->nullable(),
+                        TextInput::make('neighborhood')->label('Bairro')->maxLength(50)->nullable(),
+                        TextInput::make('city')
+                            ->label('Cidade')
+                            ->maxLength(50)
+                            ->nullable()
+                            ->rule('regex:/^[a-zA-ZÀ-ÿ\s]+$/')
+                            ->helperText('Apenas letras são permitidas.'),
+                        TextInput::make('state')
+                            ->label('Estado')
+                            ->maxLength(50)
+                            ->nullable()
+                            ->rule('regex:/^[a-zA-ZÀ-ÿ\s]+$/')
+                            ->helperText('Apenas letras são permitidas.'),
+                        TextInput::make('country')
+                            ->label('País')
+                            ->maxLength(50)
+                            ->nullable()
+                            ->rule('regex:/^[a-zA-ZÀ-ÿ\s]+$/')
+                            ->helperText('Apenas letras são permitidas.'),
+                        TextInput::make('zipcode')
+                            ->label('CEP')
+                            ->mask('99999-999')
+                            ->placeholder('99999-999')
+                            ->maxLength(10)
+                            ->nullable(),
                     ]),
             ]);
     }
@@ -192,7 +233,7 @@ class UserResource extends Resource
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('template')
-                    ->options(fn () => Template::query()
+                    ->options(fn() => Template::query()
                         ->orderBy('name')
                         ->pluck('name', 'name')
                         ->toArray()),
