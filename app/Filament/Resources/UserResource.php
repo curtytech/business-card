@@ -193,6 +193,7 @@ class UserResource extends Resource
                     ]),
             ]);
     }
+ 
 
     public static function table(Table $table): Table
     {
@@ -239,12 +240,12 @@ class UserResource extends Resource
                         ->toArray()),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\ViewAction::make()->label('Ver'),
+                Tables\Actions\EditAction::make()->label('Editar'),
+                Tables\Actions\DeleteAction::make()->label('Excluir'),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                Tables\Actions\DeleteBulkAction::make()->label('Excluir selecionados'),
             ]);
     }
 
