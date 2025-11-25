@@ -14,7 +14,7 @@ class TemplateSeeder extends Seeder
             'Minimal',
             'Modern',
             'Elegant',
-            'Bold',
+            'FullBackground',
         ];
 
         foreach ($templates as $name) {
