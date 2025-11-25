@@ -50,7 +50,7 @@
             com personalização de cores, imagem e capa — similar ao Linktree, com foco no seu negócio.
         </p>
         <div class="mt-6 flex flex-wrap items-center justify-center gap-3">
-            <a href="/admin" class="inline-flex items-center rounded-xl bg-gradient-to-tr from-amber-400 to-yellow-300 px-5 py-3 text-sm font-semibold text-slate-950 hover:brightness-95 transition">Começar agora</a>
+            <a href="/register" class="inline-flex items-center rounded-xl bg-gradient-to-tr from-amber-400 to-yellow-300 px-5 py-3 text-sm font-semibold text-slate-950 hover:brightness-95 transition">Começar agora</a>
             <a href="#preview" class="inline-flex items-center rounded-xl px-5 py-3 text-sm font-semibold text-slate-100 ring-1 ring-white/15 hover:ring-white/25 transition">Ver exemplo</a>
         </div>
     </section>
