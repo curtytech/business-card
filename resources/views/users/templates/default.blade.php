@@ -49,7 +49,7 @@
 
                 <h1 class="mt-3 text-xl font-bold">{{ $user->name }}</h1>
                 @if($user->position)
-                    <p class="text-xs text-slate-300">Cargo: {{ ucfirst($user->position) }}</p>
+                    <p class="text-xs text-slate-300">{{ ucfirst($user->position) }}</p>
                 @endif
 
                 <!-- Links -->
