@@ -12,8 +12,20 @@ class EditUser extends EditRecord
     protected function getFormActions(): array
     {
         return [
+            Actions\Action::make('deleteAccount')
+                ->label('Excluir minha conta')
+                ->color('danger')
+                ->requiresConfirmation()
+                ->visible(fn () => auth()->check() && auth()->user()->role === 'user')
+                ->action(function () {
+                    $user = $this->record;
+                    auth()->logout();
+                    $user->delete();
+                    return redirect('/');
+                }),
+
             Actions\Action::make('save')
-                ->label('Salvar')
+                ->label('Salvar alterações')
                 ->submit('save'),
 
             Actions\Action::make('cancel')

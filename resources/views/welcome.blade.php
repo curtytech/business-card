@@ -47,7 +47,7 @@
         </h1>
         <p class="mx-auto mt-4 max-w-3xl text-base sm:text-lg text-slate-300">
             Centralize seus links, redes sociais, contato e endereço em um único cartão de visitas online,
-            com personalização de cores, imagem e capa — similar ao Linktree, com foco no seu negócio.
+            com personalização de cores, imagem e capa com foco no seu negócio.
         </p>
         <div class="mt-6 flex flex-wrap items-center justify-center gap-3">
             <a href="/register" class="inline-flex items-center rounded-xl bg-gradient-to-tr from-amber-400 to-yellow-300 px-5 py-3 text-sm font-semibold text-slate-950 hover:brightness-95 transition">Começar agora</a>
