@@ -4,7 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 
 Route::get('/', function () {
-    return view('welcome');
+    $users = \App\Models\User::inRandomOrder()->take(7)->get();
+
+    return view('welcome', compact('users'));
 });
 
 // web.php (rotas de registro e público)
