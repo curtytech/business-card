@@ -139,10 +139,10 @@
 
             <div class="px-5 pb-5 text-center">
                 <div class="-mt-10 mx-auto h-20 w-20 rounded-full border border-white/20 animate-bounce">
-                     <img
-                    src="{{ asset('img/IProf.jpg') }}"
-                    alt="Capa"
-                    class="h-full w-full rounded-full object-cover mix-blend-luminosity">
+                    <img
+                        src="{{ asset('img/IProf.jpg') }}"
+                        alt="Capa"
+                        class="h-full w-full rounded-full object-cover mix-blend-luminosity">
                 </div>
                 <h4 class="mt-3 text-lg font-bold">Phelipe Curty</h4>
                 <p class="text-sm text-slate-300">Desenvolvedor</p>
@@ -153,17 +153,21 @@
                         Site Oficial
                     </a>
                     <a href="https://www.instagram.com/phelipecurty" class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-100 hover:bg-white/10 hover:-translate-y-0.5 transition">
-                        <i class="fa-solid fa-globe text-white"></i>
+                        <i class="fa-brands fa-instagram text-white"></i>
                         Instagram
                     </a>
                     <a href="https://www.linkedin.com/in/phelipecurty/" class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-100 hover:bg-white/10 hover:-translate-y-0.5 transition">
-                        <i class="fa-brands fa-linkedin text-black"></i>
+                        <i class="fa-brands fa-linkedin text-white"></i>
                         LinkedIn
                     </a>
                     <a href="#" class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-100 hover:bg-white/10 hover:-translate-y-0.5 transition">
-                        <i class="fa-brands fa-whatsapp text-black"></i>
+                        <i class="fa-brands fa-whatsapp text-white"></i>
                         WhatsApp
                     </a>
+                    <span id="shareBtn" class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-100 hover:bg-white/10 hover:-translate-y-0.5 transition">
+                        <i class="fa-light fa-share-nodes text-white"></i>
+                        Compartilhar
+                    </span>
                 </div>
 
                 <p class="mt-3 text-xs text-slate-400">Exemplo ilustrativo de cartão com links</p>
@@ -179,6 +183,33 @@
             </a>
         </div>
     </footer>
+
+
+    <script>
+        const shareBtn = document.getElementById("shareBtn");
+        
+        shareBtn.addEventListener("click", async () => {
+            const shareData = {
+                title: "Meu Web App",
+                text: "Confira este app incrível!",
+                url: window.location.href
+            };
+
+            if (navigator.share) {
+                // Web Share API disponível
+                try {
+                    await navigator.share(shareData);
+                    console.log("Compartilhado com sucesso!");
+                } catch (err) {
+                    console.log("Erro ao compartilhar:", err);
+                }
+            } else {
+                // Fallback: copiar link
+                // navigator.clipboard.writeText(window.location.href);
+                // alert("Link copiado para a área de transferência!");
+            }
+        });
+    </script>
 </body>
 
 </html>
