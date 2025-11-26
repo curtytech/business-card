@@ -12,12 +12,15 @@ class UserController extends Controller
 {
     public function show(User $user)
     {
-        // Se o template não for especificado, use o padrão
-        if (!$user->template) {
-            $user->template = 'default';
+        $template = $user->template ?: 'default';
+        $template = Str::of($template)->lower()->slug('-');
+
+        $view = "users.templates.$template";
+        if (! view()->exists($view)) {
+            $view = 'users.templates.default';
         }
 
-        return view("users.templates.{$user->template}", compact('user'));
+        return view($view, compact('user'));
     }
 
     public function create()

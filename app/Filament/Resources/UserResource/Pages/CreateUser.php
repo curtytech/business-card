@@ -18,4 +18,18 @@ class CreateUser extends CreateRecord
     {
         return auth()->check() && auth()->user()->role !== 'user';
     }
+
+       protected function getFormActions(): array
+    {
+        return [
+            Actions\Action::make('save')
+                ->label('Salvar')
+                ->submit('save'),
+
+            Actions\Action::make('cancel')
+                ->label('Cancelar')
+                ->url($this->getResource()::getUrl('index'))
+                ->color('gray'),
+        ];
+    }
 }

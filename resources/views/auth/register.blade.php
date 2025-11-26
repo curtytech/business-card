@@ -66,10 +66,11 @@
                     </div>
 
                     <div>
-                        <label for="slug" class="block text-sm font-medium text-slate-200">Slug</label>
+                        <label for="slug" class="block text-sm font-medium text-slate-200">Link</label>
                         <input id="slug" name="slug" type="text" value="{{ old('slug') }}"
                                class="mt-1 w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-400"
-                               placeholder="Seu slug" required autofocus>
+                               placeholder="Seu link" required autofocus>
+                               <p class="mt-1 text-xs text-slate-400">Seu Link ficará Exemplo: https://card.you.tec.br/ser_nome</p>
                         @error('slug')
                             <div class="mt-1 text-xs text-red-300">{{ $message }}</div>
                         @enderror
