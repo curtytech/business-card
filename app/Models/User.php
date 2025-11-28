@@ -43,6 +43,7 @@ class User extends Authenticatable
         'zipcode',
         'password',
         'role',
+        'description',
     ];
 
     /**

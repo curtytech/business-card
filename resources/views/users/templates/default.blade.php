@@ -53,6 +53,15 @@
                 <p class="text-xs text-slate-300">{{ ucfirst($user->position) }}</p>
                 @endif
 
+                @if (!empty($user->description))
+                <section class="mt-5 grid">
+                    <div class="rounded-2xl border border-white/10 bg-white/5 p-2 shadow-xl shadow-black/30 prose prose-invert">
+                        {!! $user->description !!}
+                    </div>
+                </section>
+                @endif
+
+
                 <!-- Links -->
                 <div class="mt-5 grid gap-2">
                     @if($user->facebook)

@@ -129,5 +129,13 @@
     </main>
 </body>
 </html>
+<?php /* dentro do template público do usuário */ ?>
+@if (!empty($user->description))
+    <section class="mx-auto max-w-2xl px-6 py-6">
+        <div class="rounded-2xl border border-white/10 bg-white/5 p-5 shadow-xl shadow-black/30 prose prose-invert">
+            {!! $user->description !!}
+        </div>
+    </section>
+@endif
 
 

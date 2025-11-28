@@ -4,13 +4,15 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
 use App\Models\User;
+use App\Models\Template;
 use Filament\Forms;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\KeyValue;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -20,7 +22,6 @@ use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Template;
 
 class UserResource extends Resource
 {
@@ -37,31 +38,26 @@ class UserResource extends Resource
         return $form
             ->schema([
                 Section::make('Informações Básicas')
-                    ->columns(3)
+                    ->columns(2)
                     ->schema([
                         TextInput::make('name')
                             ->label('Nome')
                             ->required()
-                            ->maxLength(70)
+                            ->maxLength(255)
                             ->live(onBlur: true)
                             ->afterStateUpdated(function ($state, Set $set) {
                                 $set('slug', Str::slug($state));
                             }),
 
                         TextInput::make('slug')
-                            ->label('Link')
+                            ->label('Slug')
                             ->required()
-                            ->maxLength(50)
+                            ->maxLength(255)
                             ->placeholder('ex: joao-silva')
                             ->helperText('Use apenas letras e números; espaços viram "-".')
                             ->rule('regex:/^[a-z0-9-]+$/')
                             ->unique(table: 'users', column: 'slug', ignoreRecord: true)
-                            ->dehydrateStateUsing(fn($state) => Str::slug((string) $state)),
-
-                        TextInput::make('position')
-                            ->label('Posição')
-                            ->maxLength(50)
-                            ->nullable(),
+                            ->dehydrateStateUsing(fn ($state) => Str::slug((string) $state)),
                     ]),
 
                 Section::make('Autenticação')
@@ -72,6 +68,7 @@ class UserResource extends Resource
                             ->email()
                             ->required()
                             ->unique(table: 'users', column: 'email', ignoreRecord: true),
+
                         TextInput::make('password')
                             ->label('Senha')
                             ->password()
@@ -79,7 +76,6 @@ class UserResource extends Resource
                             ->dehydrateStateUsing(fn($state) => filled($state) ? bcrypt($state) : null)
                             ->dehydrated(fn($state) => filled($state))
                             ->required(fn(string $context) => $context === 'create'),
-
                     ]),
 
                 Section::make('Imagens e Cores')
@@ -90,6 +86,7 @@ class UserResource extends Resource
                             ->image()
                             ->disk('public')
                             ->directory('users'),
+
                         FileUpload::make('cover_image')
                             ->label('Imagem de capa')
                             ->image()
@@ -103,14 +100,39 @@ class UserResource extends Resource
                             ->label('Cor secundária'),
                     ]),
 
+                Section::make('Descrição')
+                    ->columns(1)
+                    ->schema([
+                        RichEditor::make('description')
+                            ->label('Descrição')
+                            ->toolbarButtons([
+                                'bold',
+                                'italic',
+                                'underline',
+                                'strike',
+                                'h2',
+                                'h3',
+                                'blockquote',
+                                'link',
+                                'orderedList',
+                                'bulletList',
+                                'codeBlock',
+                                'undo',
+                                'redo',
+                            ])
+                            ->placeholder('Conte sobre você ou seu negócio...')
+                            ->columnSpan('full')
+                            ->nullable(),
+                    ]),
+
                 Section::make('Template')
                     ->schema([
                         Select::make('template')
                             ->label('Template')
-                            ->options([
-                                'default' => 'Padrão',
-                                'elegant' => 'Elegante',
-                            ])
+                            ->options(fn () => Template::query()
+                                ->orderBy('name')
+                                ->pluck('name', 'name')
+                                ->toArray())
                             ->searchable()
                             ->preload()
                             ->native(false)
@@ -139,61 +161,23 @@ class UserResource extends Resource
                             ->addButtonLabel('Adicionar')
                             ->deleteButtonLabel('Remover')
                             ->reorderable()
-                            ->nullable()
-                            ->rules([
-                                fn() => function (string $attribute, mixed $value, \Closure $fail) {
-                                    if (! is_array($value)) {
-                                        return;
-                                    }
-                                    foreach ($value as $url) {
-                                        if (! filter_var($url, FILTER_VALIDATE_URL)) {
-                                            $fail("O campo {$attribute} deve conter URLs válidas.");
-                                        }
-                                    }
-                                },
-                            ]),
+                            ->nullable(),
                     ]),
 
                 Section::make('Contato e Endereço')
                     ->columns(2)
                     ->schema([
-                        TextInput::make('phone')
-                            ->label('Telefone')
-                            ->mask('(99) 99999-9999')
-                            ->placeholder('(99) 99999-9999')
-                            ->maxLength(15)
-                            ->nullable(),
-                        TextInput::make('address')->label('Endereço')->maxLength(50)->nullable(),
-                        TextInput::make('number')->label('Número')->maxLength(50)->nullable(),
-                        TextInput::make('neighborhood')->label('Bairro')->maxLength(50)->nullable(),
-                        TextInput::make('city')
-                            ->label('Cidade')
-                            ->maxLength(50)
-                            ->nullable()
-                            ->rule('regex:/^[a-zA-ZÀ-ÿ\s]+$/')
-                            ->helperText('Apenas letras são permitidas.'),
-                        TextInput::make('state')
-                            ->label('Estado')
-                            ->maxLength(50)
-                            ->nullable()
-                            ->rule('regex:/^[a-zA-ZÀ-ÿ\s]+$/')
-                            ->helperText('Apenas letras são permitidas.'),
-                        TextInput::make('country')
-                            ->label('País')
-                            ->maxLength(50)
-                            ->nullable()
-                            ->rule('regex:/^[a-zA-ZÀ-ÿ\s]+$/')
-                            ->helperText('Apenas letras são permitidas.'),
-                        TextInput::make('zipcode')
-                            ->label('CEP')
-                            ->mask('99999-999')
-                            ->placeholder('99999-999')
-                            ->maxLength(10)
-                            ->nullable(),
+                        TextInput::make('phone')->label('Telefone')->maxLength(255)->nullable(),
+                        TextInput::make('address')->label('Endereço')->maxLength(255)->nullable(),
+                        TextInput::make('number')->label('Número')->maxLength(255)->nullable(),
+                        TextInput::make('neighborhood')->label('Bairro')->maxLength(255)->nullable(),
+                        TextInput::make('city')->label('Cidade')->maxLength(255)->nullable(),
+                        TextInput::make('state')->label('Estado')->maxLength(255)->nullable(),
+                        TextInput::make('country')->label('País')->maxLength(255)->nullable(),
+                        TextInput::make('zipcode')->label('CEP')->maxLength(255)->nullable(),
                     ]),
             ]);
     }
-
 
     public static function table(Table $table): Table
     {
@@ -234,18 +218,18 @@ class UserResource extends Resource
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('template')
-                    ->options(fn() => Template::query()
+                    ->options(fn () => Template::query()
                         ->orderBy('name')
                         ->pluck('name', 'name')
                         ->toArray()),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()->label('Ver'),
-                Tables\Actions\EditAction::make()->label('Editar'),
-                Tables\Actions\DeleteAction::make()->label('Excluir'),
+                Tables\Actions\ViewAction::make(),
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make()->label('Excluir selecionados'),
+                Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
 
@@ -286,7 +270,7 @@ class UserResource extends Resource
         }
 
         if (auth()->user()->role !== 'user') {
-            return true; // admin ou outros papéis podem editar
+            return true;
         }
 
         return $record->getKey() === auth()->id();
