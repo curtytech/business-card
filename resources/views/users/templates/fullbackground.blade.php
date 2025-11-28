@@ -115,6 +115,23 @@
                     @endif
                     @endforeach
                     @endif
+
+                    <span id="shareBtn" class=" cursor-pointer inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-100 hover:bg-white/10 hover:-translate-y-0.5 transition">
+                        <span class=" animate-bounce inline-flex items-center justify-center gap-2">
+
+                            <i class="fa-solid fa-share-nodes text-white"></i>
+                            Compartilhar
+                        </span>
+                    </span>
+
+                    @guest
+                    <a href="/" class=" cursor-pointer inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-100 hover:bg-white/10 hover:-translate-y-0.5 transition">
+                        <span class=" animate-bounce inline-flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-id-card text-white"></i>
+                            Crie seu cartão agora mesmo!
+                        </span>
+                    </a>
+                    @endguest
                 </div>
 
                 <!-- Endereço -->
@@ -134,6 +151,32 @@
     <p class="pb-4 text-center text-xs text-slate-400">
         © {{ date('Y') }} Cartão de Visitas Online
     </p>
+
+    <script>
+        const shareBtn = document.getElementById("shareBtn");
+
+        shareBtn.addEventListener("click", async () => {
+            const shareData = {
+                title: "Meu Web App",
+                text: "Confira este app incrível!",
+                url: window.location.href
+            };
+
+            if (navigator.share) {
+                // Web Share API disponível
+                try {
+                    await navigator.share(shareData);
+                    console.log("Compartilhado com sucesso!");
+                } catch (err) {
+                    console.log("Erro ao compartilhar:", err);
+                }
+            } else {
+                // Fallback: copiar link
+                navigator.clipboard.writeText(window.location.href);
+                alert("Link copiado para a área de transferência!");
+            }
+        });
+    </script>
 </body>
 
 </html>

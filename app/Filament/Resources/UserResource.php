@@ -107,10 +107,10 @@ class UserResource extends Resource
                     ->schema([
                         Select::make('template')
                             ->label('Template')
-                            ->options(fn() => Template::query()
-                                ->orderBy('name')
-                                ->pluck('name', 'name')
-                                ->toArray())
+                            ->options([
+                                'default' => 'Padrão',
+                                'elegant' => 'Elegante',
+                            ])
                             ->searchable()
                             ->preload()
                             ->native(false)
@@ -193,7 +193,7 @@ class UserResource extends Resource
                     ]),
             ]);
     }
- 
+
 
     public static function table(Table $table): Table
     {

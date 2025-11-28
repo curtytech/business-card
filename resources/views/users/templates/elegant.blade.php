@@ -18,6 +18,7 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script src="{{ asset('js/share.js') }}" defer></script>
 </head>
 
 <body class="min-h-screen flex items-center justify-center bg-gradient-to-b from-slate-950 via-slate-900 to-slate-800 text-slate-100 font-sans">
@@ -147,6 +148,25 @@
                 </div>
                 @endif
 
+                <span id="shareBtn" target="_blank" rel="noopener"
+                    class="cursor-pointer mt-5 mx-auto flex items-center justify-center
+                          rounded-xl border border-white/40 px-4 py-2.5
+                          text-[13px] font-semibold text-white transition hover:bg-white/10 gap-2"
+                    style="width: 250px">
+                    <i class="fa-solid fa-share-nodes text-white"></i>
+                    Compartilhar
+                </span>
+
+                @guest
+                <span id="/" target="_blank" rel="noopener"
+                    class="cursor-pointer mt-5 mx-auto flex items-center justify-center
+                          rounded-xl border border-white/40 px-4 py-2.5
+                          text-[13px] font-semibold text-white transition hover:bg-white/10 gap-2"
+                    style="width: 250px">
+                    <i class="fa-solid fa-share-nodes text-white"></i>
+                    Crie seu próprio cartão
+                </span>
+                @endguest
 
                 <!-- Botão WhatsApp -->
                 @php
@@ -189,6 +209,32 @@
 
     </main>
 
+
+    <script>
+        const shareBtn = document.getElementById("shareBtn");
+
+        shareBtn.addEventListener("click", async () => {
+            const shareData = {
+                title: "Meu Web App",
+                text: "Confira este app incrível!",
+                url: window.location.href
+            };
+
+            if (navigator.share) {
+                // Web Share API disponível
+                try {
+                    await navigator.share(shareData);
+                    console.log("Compartilhado com sucesso!");
+                } catch (err) {
+                    console.log("Erro ao compartilhar:", err);
+                }
+            } else {
+                // Fallback: copiar link
+                navigator.clipboard.writeText(window.location.href);
+                alert("Link copiado para a área de transferência!");
+            }
+        });
+    </script>
 </body>
 
 </html>

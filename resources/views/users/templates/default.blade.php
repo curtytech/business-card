@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -19,111 +20,128 @@
     <!-- O main agora centraliza o card verticalmente -->
     <main class="flex-grow flex items-center justify-center px-6 py-10">
         <div class="w-full max-w-3xl overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-2xl shadow-black/40"
-             style="--primary: {{ $user->primary_color ?: '#f59e0b' }}; --secondary: {{ $user->secondary_color ?: '#eab308' }};">
-             
+            style="--primary: {{ $user->primary_color ?: '#f59e0b' }}; --secondary: {{ $user->secondary_color ?: '#eab308' }};">
+
             <!-- Capa -->
             <div class="h-40 sm:h-48"
-                 style="background:
+                style="background:
                     radial-gradient(600px 140px at 20% 0%, color-mix(in oklab, var(--primary) 45%, transparent), transparent 60%),
                     radial-gradient(600px 140px at 80% 0%, color-mix(in oklab, var(--secondary) 40%, transparent), transparent 60%),
                     linear-gradient(135deg, #0b1224, #111827 60%, #1f2937);">
                 @if($user->cover_image)
-                    <img src="{{ asset('storage/' . $user->cover_image) }}"
-                         alt="Capa de {{ $user->name }}"
-                         class="h-full w-full object-cover mix-blend-luminosity">
+                <img src="{{ asset('storage/' . $user->cover_image) }}"
+                    alt="Capa de {{ $user->name }}"
+                    class="h-full w-full object-cover mix-blend-luminosity">
                 @endif
             </div>
 
             <!-- Corpo -->
             <div class="px-5 pb-6 text-center">
                 <div class="-mt-12 mx-auto h-24 w-24 rounded-full border-4 border-white/50 bg-white/10 shadow-xl shadow-black/40 overflow-hidden z-10 animate-bounce"
-                     style="animation-duration: 2s;">
+                    style="animation-duration: 2s;">
                     @if($user->image)
-                        <img src="{{ asset('storage/' . $user->image) }}"
-                             alt="Foto de {{ $user->name }}"
-                             class="h-full w-full object-cover">
+                    <img src="{{ asset('storage/' . $user->image) }}"
+                        alt="Foto de {{ $user->name }}"
+                        class="h-full w-full object-cover">
                     @else
-                        <div class="h-full w-full bg-gradient-to-tr from-amber-400 to-yellow-300"></div>
+                    <div class="h-full w-full bg-gradient-to-tr from-amber-400 to-yellow-300"></div>
                     @endif
                 </div>
 
                 <h1 class="mt-3 text-xl font-bold">{{ $user->name }}</h1>
                 @if($user->position)
-                    <p class="text-xs text-slate-300">{{ ucfirst($user->position) }}</p>
+                <p class="text-xs text-slate-300">{{ ucfirst($user->position) }}</p>
                 @endif
 
                 <!-- Links -->
                 <div class="mt-5 grid gap-2">
                     @if($user->facebook)
-                        <a href="{{ $user->facebook }}" target="_blank" rel="noopener"
-                           class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold hover:bg-white/10 transition">
-                            <i class="fa-brands fa-facebook-f text-white"></i>
-                            Facebook
-                        </a>
+                    <a href="{{ $user->facebook }}" target="_blank" rel="noopener"
+                        class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold hover:bg-white/10 transition">
+                        <i class="fa-brands fa-facebook-f text-white"></i>
+                        Facebook
+                    </a>
                     @endif
 
                     @if($user->instagram)
-                        <a href="{{ $user->instagram }}" target="_blank" rel="noopener"
-                           class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold hover:bg-white/10 transition">
-                            <i class="fa-brands fa-instagram text-white"></i>
-                            Instagram
-                        </a>
+                    <a href="{{ $user->instagram }}" target="_blank" rel="noopener"
+                        class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold hover:bg-white/10 transition">
+                        <i class="fa-brands fa-instagram text-white"></i>
+                        Instagram
+                    </a>
                     @endif
 
                     @if($user->twitter)
-                        <a href="{{ $user->twitter }}" target="_blank" rel="noopener"
-                           class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold hover:bg-white/10 transition">
-                            <i class="fa-brands fa-twitter text-white"></i>
-                            Twitter/X
-                        </a>
+                    <a href="{{ $user->twitter }}" target="_blank" rel="noopener"
+                        class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold hover:bg-white/10 transition">
+                        <i class="fa-brands fa-twitter text-white"></i>
+                        Twitter/X
+                    </a>
                     @endif
 
                     @if($user->linkedin)
-                        <a href="{{ $user->linkedin }}" target="_blank" rel="noopener"
-                           class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold hover:bg-white/10 transition">
-                            <i class="fa-brands fa-linkedin-in text-white"></i>
-                            LinkedIn
-                        </a>
+                    <a href="{{ $user->linkedin }}" target="_blank" rel="noopener"
+                        class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold hover:bg-white/10 transition">
+                        <i class="fa-brands fa-linkedin-in text-white"></i>
+                        LinkedIn
+                    </a>
                     @endif
 
                     @if($user->whatsapp)
-                        <a href="{{ str_starts_with($user->whatsapp, 'http') ? $user->whatsapp : 'https://wa.me/' . preg_replace('/\D+/', '', $user->whatsapp) }}"
-                           target="_blank" rel="noopener"
-                           class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold hover:bg-white/10 transition">
-                            <i class="fa-brands fa-whatsapp text-white"></i>
-                            WhatsApp
-                        </a>
+                    <a href="{{ str_starts_with($user->whatsapp, 'http') ? $user->whatsapp : 'https://wa.me/' . preg_replace('/\D+/', '', $user->whatsapp) }}"
+                        target="_blank" rel="noopener"
+                        class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold hover:bg-white/10 transition">
+                        <i class="fa-brands fa-whatsapp text-white"></i>
+                        WhatsApp
+                    </a>
                     @endif
 
                     @if($user->phone)
-                        <a href="tel:{{ preg_replace('/\D+/', '', $user->phone) }}"
-                           class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold hover:bg-white/10 transition">
-                            <i class="fa-solid fa-phone text-white"></i>
-                            {{ $user->phone }}
-                        </a>
+                    <a href="tel:{{ preg_replace('/\D+/', '', $user->phone) }}"
+                        class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold hover:bg-white/10 transition">
+                        <i class="fa-solid fa-phone text-white"></i>
+                        {{ $user->phone }}
+                    </a>
                     @endif
 
                     @if(!empty($user->other_social_networks) && is_array($user->other_social_networks))
-                        @foreach($user->other_social_networks as $label => $url)
-                            @if(!empty($url))
-                                <a href="{{ $url }}" target="_blank" rel="noopener"
-                                   class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold hover:bg-white/10 transition">
-                                    <i class="fa-solid fa-link text-white"></i>
-                                    {{ $label }}
-                                </a>
-                            @endif
-                        @endforeach
+                    @foreach($user->other_social_networks as $label => $url)
+                    @if(!empty($url))
+                    <a href="{{ $url }}" target="_blank" rel="noopener"
+                        class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold hover:bg-white/10 transition">
+                        <i class="fa-solid fa-link text-white"></i>
+                        {{ $label }}
+                    </a>
                     @endif
+                    @endforeach
+                    @endif
+
+                    <span id="shareBtn" class=" cursor-pointer inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-100 hover:bg-white/10 hover:-translate-y-0.5 transition">
+                        <span class=" animate-bounce inline-flex items-center justify-center gap-2">
+
+                            <i class="fa-solid fa-share-nodes text-white"></i>
+                            Compartilhar
+                        </span>
+                    </span>
+
+                    @guest
+                    <a href="/" class=" cursor-pointer inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-100 hover:bg-white/10 hover:-translate-y-0.5 transition">
+                        <span class=" animate-bounce inline-flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-id-card text-white"></i>
+                            Crie seu cartão agora mesmo!
+                        </span>
+                    </a>
+                    @endguest
                 </div>
 
                 <!-- Endereço -->
                 @if($user->address || $user->city || $user->state || $user->country || $user->zipcode)
-                    <div class="mt-5 text-xs text-slate-300">
-                        {{ $user->address }} {{ $user->number ? ', ' . $user->number : '' }}
-                        {{ $user->neighborhood ? ' — ' . $user->neighborhood : '' }}<br>
-                        {{ $user->city }}{{ $user->state ? ' - ' . $user->state : '' }}<br>
-                        {{ $user->country }} {{ $user->zipcode ? ' • CEP: ' . $user->zipcode : '' }}
-                    </div>
+                <div class="mt-5 text-xs text-slate-300">
+                    {{ $user->address }} {{ $user->number ? ', ' . $user->number : '' }}
+                    {{ $user->neighborhood ? ' — ' . $user->neighborhood : '' }}<br>
+                    {{ $user->city }}{{ $user->state ? ' - ' . $user->state : '' }}<br>
+                    {{ $user->country }} {{ $user->zipcode ? ' • CEP: ' . $user->zipcode : '' }}
+                </div>
                 @endif
             </div>
         </div>
@@ -133,5 +151,32 @@
     <p class="pb-4 text-center text-xs text-slate-400">
         © {{ date('Y') }} Cartão de Visitas Online
     </p>
+
+    <script>
+        const shareBtn = document.getElementById("shareBtn");
+
+        shareBtn.addEventListener("click", async () => {
+            const shareData = {
+                title: "Meu Web App",
+                text: "Confira este app incrível!",
+                url: window.location.href
+            };
+
+            if (navigator.share) {
+                // Web Share API disponível
+                try {
+                    await navigator.share(shareData);
+                    console.log("Compartilhado com sucesso!");
+                } catch (err) {
+                    console.log("Erro ao compartilhar:", err);
+                }
+            } else {
+                // Fallback: copiar link
+                navigator.clipboard.writeText(window.location.href);
+                alert("Link copiado para a área de transferência!");
+            }
+        });
+    </script>
 </body>
+
 </html>
