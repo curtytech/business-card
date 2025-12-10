@@ -166,8 +166,8 @@
 
         shareBtn.addEventListener("click", async () => {
             const shareData = {
-                title: "Meu Web App",
-                text: "Confira este app incrível!",
+                title: "Meu Cartão de Visitas Online",
+                text: "Confira agora mesmo meu cartão de visitas online!",
                 url: window.location.href
             };
 
@@ -186,6 +186,8 @@
             }
         });
     </script>
+
+    
 </body>
 
 </html>
