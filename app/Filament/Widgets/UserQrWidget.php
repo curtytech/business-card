@@ -15,7 +15,7 @@ class UserQrWidget extends Widget
     {
         $user = auth()->user();
         $slug = $user?->slug;
-        $base = 'https://card.you.tec.br/';
+        $base = env('APP_URL') . '/';
         $url = $slug ? $base . $slug : null;
         $qrApi = $url ? 'https://api.qrserver.com/v1/create-qr-code/?size=480x480&data=' . urlencode($url) : null;
 
