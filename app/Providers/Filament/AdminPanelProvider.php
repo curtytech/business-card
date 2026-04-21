@@ -42,7 +42,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->renderHook(
                 'panels::body.end',
-                fn () => view('livewire.ai-chat-widget'),
+                fn () => view('filament.hooks.ai-chat-widget'),
             )
             ->middleware([
                 EncryptCookies::class,
