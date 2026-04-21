@@ -40,10 +40,6 @@ class AdminPanelProvider extends PanelProvider
                 \App\Filament\Widgets\UsuariosCardWidget::class,
                 \App\Filament\Widgets\UserQrWidget::class,
             ])
-            ->renderHook(
-                'panels::body.end',
-                fn () => view('filament.hooks.ai-chat-widget'),
-            )
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
