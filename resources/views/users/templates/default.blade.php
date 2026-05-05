@@ -19,7 +19,7 @@
 
     <!-- O main agora centraliza o card verticalmente -->
     <main class="flex-grow flex items-center justify-center px-6 py-10">
-        <div class="w-full max-w-3xl overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-2xl shadow-black/40"
+        <div id="businessCardCapture" class="w-full max-w-3xl overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-2xl shadow-black/40"
             style="--primary: {{ $user->primary_color ?: '#f59e0b' }}; --secondary: {{ $user->secondary_color ?: '#eab308' }};">
 
             <!-- Capa -->
@@ -30,6 +30,7 @@
                     linear-gradient(135deg, #0b1224, #111827 60%, #1f2937);">
                 @if($user->cover_image)
                 <img src="{{ asset('storage/' . $user->cover_image) }}"
+                    crossorigin="anonymous"
                     alt="Capa de {{ $user->name }}"
                     class="h-full w-full object-cover mix-blend-luminosity">
                 @endif
@@ -41,6 +42,7 @@
                     style="animation-duration: 2s;">
                     @if($user->image)
                     <img src="{{ asset('storage/' . $user->image) }}"
+                        crossorigin="anonymous"
                         alt="Foto de {{ $user->name }}"
                         class="h-full w-full object-cover">
                     @else
@@ -125,13 +127,33 @@
                     @endforeach
                     @endif
 
-                    <span id="shareBtn" class=" cursor-pointer inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-100 hover:bg-white/10 hover:-translate-y-0.5 transition">
-                        <span class=" animate-bounce inline-flex items-center justify-center gap-2">
+                    <div class="mt-2 grid gap-2 sm:grid-cols-2">
+                        <button id="downloadImageBtn" type="button"
+                            class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-100 hover:bg-white/10 hover:-translate-y-0.5 transition">
+                            <i class="fa-solid fa-image text-white"></i>
+                            Baixar imagem
+                        </button>
 
+                        <button id="downloadVideoBtn" type="button"
+                            class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-100 hover:bg-white/10 hover:-translate-y-0.5 transition">
+                            <i class="fa-solid fa-film text-white"></i>
+                            Baixar video curto
+                        </button>
+
+                        <button id="shareStoryBtn" type="button"
+                            class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-100 hover:bg-white/10 hover:-translate-y-0.5 transition">
                             <i class="fa-solid fa-share-nodes text-white"></i>
-                            Compartilhar
-                        </span>
-                    </span>
+                            Compartilhar story
+                        </button>
+
+                        <button id="copyLinkBtn" type="button"
+                            class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-100 hover:bg-white/10 hover:-translate-y-0.5 transition">
+                            <i class="fa-solid fa-link text-white"></i>
+                            Copiar link
+                        </button>
+                    </div>
+
+                    <p id="shareFeedback" class="text-xs text-slate-300"></p>
 
                     @guest
                     <a href="/" class=" cursor-pointer inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-slate-100 hover:bg-white/10 hover:-translate-y-0.5 transition">
@@ -161,28 +183,317 @@
         © {{ date('Y') }} Cartão de Visitas Online
     </p>
 
+    <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.min.js"></script>
     <script>
-        const shareBtn = document.getElementById("shareBtn");
+        const cardEl = document.getElementById('businessCardCapture');
+        const downloadImageBtn = document.getElementById('downloadImageBtn');
+        const downloadVideoBtn = document.getElementById('downloadVideoBtn');
+        const shareStoryBtn = document.getElementById('shareStoryBtn');
+        const copyLinkBtn = document.getElementById('copyLinkBtn');
+        const shareFeedback = document.getElementById('shareFeedback');
+        const actionButtons = [downloadImageBtn, downloadVideoBtn, shareStoryBtn, copyLinkBtn].filter(Boolean);
+        const baseFileName = '{{ \Illuminate\Support\Str::slug($user->name ?: "cartao") }}';
 
-        shareBtn.addEventListener("click", async () => {
-            const shareData = {
-                title: "Meu Cartão de Visitas Online",
-                text: "Confira agora mesmo meu cartão de visitas online!",
-                url: window.location.href
+        function setFeedback(message, isError = false) {
+            if (!shareFeedback) {
+                return;
+            }
+
+            shareFeedback.textContent = message;
+            shareFeedback.className = isError ? 'text-xs text-red-300' : 'text-xs text-slate-300';
+        }
+
+        function setBusy(isBusy, message = 'Processando...') {
+            actionButtons.forEach((button) => {
+                button.disabled = isBusy;
+                button.classList.toggle('opacity-60', isBusy);
+                button.classList.toggle('cursor-not-allowed', isBusy);
+            });
+
+            setFeedback(isBusy ? message : '');
+        }
+
+        function blobFromCanvas(canvas, type, quality) {
+            return new Promise((resolve) => {
+                canvas.toBlob((blob) => {
+                    if (blob) {
+                        resolve(blob);
+                        return;
+                    }
+
+                    const dataUrl = canvas.toDataURL(type, quality);
+                    const base64 = dataUrl.split(',')[1];
+                    const byteString = atob(base64);
+                    const array = new Uint8Array(byteString.length);
+
+                    for (let i = 0; i < byteString.length; i++) {
+                        array[i] = byteString.charCodeAt(i);
+                    }
+
+                    resolve(new Blob([array], { type }));
+                }, type, quality);
+            });
+        }
+
+        async function captureCardCanvas() {
+            if (typeof htmlToImage === 'undefined') {
+                throw new Error('Biblioteca de captura indisponivel.');
+            }
+
+            if (!cardEl) {
+                throw new Error('Cartao nao encontrado para captura.');
+            }
+
+            return htmlToImage.toCanvas(cardEl, {
+                cacheBust: true,
+                includeQueryParams: true,
+                pixelRatio: Math.min(window.devicePixelRatio || 1, 2),
+                backgroundColor: '#020617',
+            });
+        }
+
+        function roundRect(ctx, x, y, width, height, radius) {
+            const safeRadius = Math.min(radius, width / 2, height / 2);
+
+            ctx.beginPath();
+            ctx.moveTo(x + safeRadius, y);
+            ctx.lineTo(x + width - safeRadius, y);
+            ctx.quadraticCurveTo(x + width, y, x + width, y + safeRadius);
+            ctx.lineTo(x + width, y + height - safeRadius);
+            ctx.quadraticCurveTo(x + width, y + height, x + width - safeRadius, y + height);
+            ctx.lineTo(x + safeRadius, y + height);
+            ctx.quadraticCurveTo(x, y + height, x, y + height - safeRadius);
+            ctx.lineTo(x, y + safeRadius);
+            ctx.quadraticCurveTo(x, y, x + safeRadius, y);
+            ctx.closePath();
+        }
+
+        function drawStoryScene(ctx, canvas, cardSource, zoom = 1) {
+            const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            gradient.addColorStop(0, '#020617');
+            gradient.addColorStop(0.55, '#0f172a');
+            gradient.addColorStop(1, '#1e293b');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = 'rgba(245, 158, 11, 0.14)';
+            ctx.beginPath();
+            ctx.arc(180, 220, 180, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = 'rgba(234, 179, 8, 0.12)';
+            ctx.beginPath();
+            ctx.arc(920, 1640, 220, 0, Math.PI * 2);
+            ctx.fill();
+
+            const maxWidth = 860;
+            const maxHeight = 1280;
+            const scale = Math.min(maxWidth / cardSource.width, maxHeight / cardSource.height);
+            const width = cardSource.width * scale * zoom;
+            const height = cardSource.height * scale * zoom;
+            const x = (canvas.width - width) / 2;
+            const y = (canvas.height - height) / 2;
+
+            ctx.save();
+            ctx.shadowColor = 'rgba(15, 23, 42, 0.45)';
+            ctx.shadowBlur = 70;
+            ctx.shadowOffsetY = 28;
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.06)';
+            roundRect(ctx, x, y, width, height, 42);
+            ctx.fill();
+            ctx.restore();
+
+            ctx.save();
+            roundRect(ctx, x, y, width, height, 42);
+            ctx.clip();
+            ctx.drawImage(cardSource, x, y, width, height);
+            ctx.restore();
+
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.92)';
+            ctx.font = '700 42px Instrument Sans, Arial, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('Compartilhe meu cartao digital', canvas.width / 2, 132);
+
+            ctx.fillStyle = 'rgba(226, 232, 240, 0.95)';
+            ctx.font = '500 28px Instrument Sans, Arial, sans-serif';
+            ctx.fillText(window.location.host, canvas.width / 2, 1800);
+        }
+
+        function buildStoryCanvas(cardCanvas) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 1080;
+            canvas.height = 1920;
+
+            const ctx = canvas.getContext('2d');
+            drawStoryScene(ctx, canvas, cardCanvas);
+
+            return canvas;
+        }
+
+        async function createStoryImageBlob() {
+            const cardCanvas = await captureCardCanvas();
+            const storyCanvas = buildStoryCanvas(cardCanvas);
+
+            return blobFromCanvas(storyCanvas, 'image/png', 1);
+        }
+
+        async function createStoryVideoBlob() {
+            if (typeof MediaRecorder === 'undefined') {
+                throw new Error('Seu navegador nao suporta gravacao de video.');
+            }
+
+            const cardCanvas = await captureCardCanvas();
+            const storyCanvas = buildStoryCanvas(cardCanvas);
+            const stream = storyCanvas.captureStream(30);
+
+            const mimeType = [
+                'video/webm;codecs=vp9',
+                'video/webm;codecs=vp8',
+                'video/webm',
+            ].find((type) => MediaRecorder.isTypeSupported(type));
+
+            if (!mimeType) {
+                throw new Error('Seu navegador nao suporta exportacao de video.');
+            }
+
+            const context = storyCanvas.getContext('2d');
+            const duration = 5000;
+            const start = performance.now();
+            const cardImage = new Image();
+            cardImage.src = cardCanvas.toDataURL('image/png');
+
+            await new Promise((resolve, reject) => {
+                cardImage.onload = resolve;
+                cardImage.onerror = reject;
+            });
+
+            const chunks = [];
+            const recorder = new MediaRecorder(stream, {
+                mimeType,
+                videoBitsPerSecond: 4_000_000,
+            });
+
+            recorder.ondataavailable = (event) => {
+                if (event.data.size > 0) {
+                    chunks.push(event.data);
+                }
             };
 
-            if (navigator.share) {
-                // Web Share API disponível
-                try {
-                    await navigator.share(shareData);
-                    console.log("Compartilhado com sucesso!");
-                } catch (err) {
-                    console.log("Erro ao compartilhar:", err);
+            const stopPromise = new Promise((resolve) => {
+                recorder.onstop = () => resolve(new Blob(chunks, { type: mimeType }));
+            });
+
+            function drawFrame(now) {
+                const progress = Math.min((now - start) / duration, 1);
+                const zoom = 1 + (progress * 0.06);
+
+                context.clearRect(0, 0, storyCanvas.width, storyCanvas.height);
+                drawStoryScene(context, storyCanvas, cardImage, zoom);
+
+                if (progress < 1) {
+                    requestAnimationFrame(drawFrame);
+                } else {
+                    recorder.stop();
                 }
-            } else {
-                // Fallback: copiar link
-                navigator.clipboard.writeText(window.location.href);
-                alert("Link copiado para a área de transferência!");
+            }
+
+            recorder.start(250);
+            requestAnimationFrame(drawFrame);
+
+            return stopPromise;
+        }
+
+        function downloadBlob(blob, filename) {
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            URL.revokeObjectURL(url);
+        }
+
+        async function shareFile(blob, filename, title, text) {
+            if (!navigator.share) {
+                throw new Error('Compartilhamento de arquivos indisponivel neste navegador.');
+            }
+
+            const file = new File([blob], filename, { type: blob.type });
+            const shareData = {
+                files: [file],
+                title,
+                text,
+            };
+
+            if (navigator.canShare && !navigator.canShare(shareData)) {
+                throw new Error('Seu navegador nao aceitou este arquivo para compartilhamento.');
+            }
+
+            await navigator.share(shareData);
+        }
+
+        downloadImageBtn?.addEventListener('click', async () => {
+            try {
+                setBusy(true, 'Gerando imagem para story...');
+                const blob = await createStoryImageBlob();
+                downloadBlob(blob, `${baseFileName}-story.png`);
+                setFeedback('Imagem gerada com sucesso.');
+            } catch (error) {
+                setFeedback(error.message || 'Nao foi possivel gerar a imagem.', true);
+            } finally {
+                setBusy(false);
+            }
+        });
+
+        downloadVideoBtn?.addEventListener('click', async () => {
+            try {
+                setBusy(true, 'Gerando video curto...');
+                const blob = await createStoryVideoBlob();
+                downloadBlob(blob, `${baseFileName}-story.webm`);
+                setFeedback('Video curto gerado com sucesso.');
+            } catch (error) {
+                setFeedback(error.message || 'Nao foi possivel gerar o video.', true);
+            } finally {
+                setBusy(false);
+            }
+        });
+
+        shareStoryBtn?.addEventListener('click', async () => {
+            try {
+                setBusy(true, 'Preparando story para compartilhamento...');
+                const blob = await createStoryImageBlob();
+                await shareFile(
+                    blob,
+                    `${baseFileName}-story.png`,
+                    'Meu cartao digital',
+                    'Compartilhe este cartao no Instagram, Facebook ou WhatsApp.'
+                );
+                setFeedback('Story enviado para a tela de compartilhamento.');
+            } catch (error) {
+                if (error.name === 'AbortError') {
+                    setFeedback('Compartilhamento cancelado.');
+                } else {
+                    setFeedback('Nao foi possivel compartilhar. A imagem foi baixada como alternativa.', true);
+
+                    try {
+                        const fallbackBlob = await createStoryImageBlob();
+                        downloadBlob(fallbackBlob, `${baseFileName}-story.png`);
+                    } catch (_) {
+                        // noop
+                    }
+                }
+            } finally {
+                setBusy(false);
+            }
+        });
+
+        copyLinkBtn?.addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText(window.location.href);
+                setFeedback('Link copiado para a area de transferencia.');
+            } catch (error) {
+                setFeedback('Nao foi possivel copiar o link.', true);
             }
         });
     </script>
